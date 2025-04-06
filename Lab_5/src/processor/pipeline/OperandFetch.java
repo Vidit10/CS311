@@ -70,7 +70,6 @@ public class OperandFetch {
                 && toCheck.getDestinationOperand() != null
                 && (toCheck.getDestinationOperand().getValue() == inst.getSourceOperand1().getValue() ||
                         toCheck.getDestinationOperand().getValue() == inst.getSourceOperand2().getValue())) {
-            /// System.out.println("!!!");
             return true;
         } else if (toCheck != null &&
                 !toCheck.getOperationType().toString().equals("nop")
@@ -94,8 +93,6 @@ public class OperandFetch {
     }
 
     public void performOF() {
-        // System.out.println("YessO");
-        // System.out.println(OF_EX_Latch.isEX_busy());
         if (EX_MA_Latch.isMA_busy()) {
             return;
         }
@@ -256,7 +253,6 @@ public class OperandFetch {
             Instruction nop = new Instruction();
             nop.setOperationType(OperationType.nop);
             boolean notConflict = false;
-            // int tk=0;
             int freeze = 0;
             while (true) {
                 if (EX_MA_Latch.getFlag() == 1) {

@@ -23,8 +23,6 @@ public class RegisterWrite {
     }
 
     public void performRW() {
-        //System.out.println("YessRW");
-        //System.out.println(OF_EX_Latch.isEX_busy());
         if (OF_EX_Latch.isEX_busy()) {
             return;
         }
