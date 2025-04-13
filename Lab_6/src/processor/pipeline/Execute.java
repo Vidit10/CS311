@@ -5,7 +5,7 @@ import generic.Instruction.OperationType;
 import generic.Operand;
 import processor.Processor;
 
-import java.util.Arrays;
+// import java.util.Arrays;
 
 public class Execute {
     Processor containingProcessor;
@@ -42,8 +42,8 @@ public class Execute {
                 Instruction cmd = OF_EX_Latch.getInstruction();
                 EX_MA_Latch.setInstruction(cmd);
                 OperationType cmd_op = cmd.getOperationType();
-                int cmd_op_opcode = Arrays.asList(OperationType.values()).indexOf(cmd_op);
-                int currentPC = containingProcessor.getRegisterFile().getProgramCounter() - 1;
+                // int cmd_op_opcode = Arrays.asList(OperationType.values()).indexOf(cmd_op);
+                // int currentPC = containingProcessor.getRegisterFile().getProgramCounter() - 1;
                 String opType = cmd_op.toString();
                 boolean b = opType.equals("addi") || opType.equals("subi") || opType.equals("muli") || opType.equals("divi")
                 || opType.equals("andi") || opType.equals("ori") || opType.equals("xori") || opType.equals("slti")

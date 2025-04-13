@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegray}{gray}{0.95}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    showspaces=false,
+    showstringspaces=false,
+    frame=single,
+    captionpos=b
+}
+
+\title{\textbf{CS311} (Computer Architecture Lab) \textbf{Assignment-06}}
+\author{\textbf{Vidit Parikh} [MC23BT010]}
+\date{\today}
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The goal of this assignment was to simulate the addition of caches for a better memory access in the stages which require interaction with the memory. This is done by implementing the following changes:
+\begin{itemize}
+    \item One cache (\texttt{instCache}) was added between the Instruction Fetch (IF) stage and the main memory. This cache is known as: \texttt{L1i-cache} or the "Level-1 Instruction Cache".
+    \item One more kind of cache (\texttt{dataCache}) was added between the Memory Access (MA) stage and the main memory. This cache is known as: \texttt{L1d-cache} or the "Level 1 data cache".
+\end{itemize}
+
+\section{Cache Configurations}
+{\tiny This is in line with the specifications as mentioned in the assignment problem statement.}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Cache Size} & \textbf{16B} & \textbf{128B} & \textbf{512B} & \textbf{1kB}\\
+        \hline
+        \textbf{Latency} & 1 cycle & 2 cycles & 3 cycles & 4 cycles\\
+        \hline
+        \textbf{Line Size} & \multicolumn{4}{c|}{4B}\\
+        \hline
+        \textbf{Associativity} & \multicolumn{4}{c|}{2}\\
+        \hline
+        \textbf{Write Policy} & \multicolumn{4}{c|}{Write Through}\\
+        \hline
+    \end{tabular}
+    \caption{Cache Configurations}
+    \label{tab:cache_config}
+\end{table}
+
+\section{Observations \& Tabulations}
+Now, in this section, we shall consider two cases --- one, when the size of the data cache is fixed at $1kB (1024B)$, while we vary the instruction cache values to note various observations upon running the simulator program.
+
+\subsection{Varying Instruction Cache}
+We fix the size of the \texttt{L1d-cache} at 1kB. Then, we vary the size of the L1i-cache from 16B $\rightarrow$ 128B $\rightarrow$ 512B $\rightarrow$ 1024B (1kB). The latency is supposed to be changed accordingly. Now, we study the performance (IPC - instructions per cycle) and plot the graph as attached.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \multirow{2}{*}{\textbf{Name of Program}} & \multicolumn{5}{c|}{\textbf{IPC}} \\
+        \cline{2-6}
+        & \textbf{No Cache} & \textbf{16B} & \textbf{128B} & \textbf{512B} & \textbf{1024B} \\
+        \hline
+        \texttt{descending.asm} & 0.02493 & 0.02293 & 0.08848 & 0.07804 & 0.06977 \\
+        \hline
+        \texttt{evenorodd.asm}  & 0.02439 & 0.02238 & 0.02158 & 0.02083 & 0.02013 \\
+        \hline
+        \texttt{fibonacci.asm}  & 0.02482 & 0.02291 & 0.05864 & 0.05313 & 0.04850 \\
+        \hline
+        \texttt{prime.asm}      & 0.02463 & 0.02375 & 0.05022 & 0.04576 & 0.04202 \\  % Changed 0.4202 → 0.04202
+        \hline
+        \texttt{palindrome.asm} & 0.02462 & 0.02315 & 0.06947 & 0.06113 & 0.05458 \\
+        \hline
+    \end{tabular}
+    \caption{Instruction Per Cycle (IPC) across different L1i-cache sizes}
+    \label{tab:ipc_results}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{case1.png}
+    \caption{Graph for comparing the varying L1i-cache}
+    \label{fig:graph1}
+\end{figure}
+
+\subsection{Varying Data Cache}
+We now fix the size of the \texttt{L1i-cache} at 1kB. Then, we vary the size of the L1d-cache from 16B $\rightarrow$ 128B $\rightarrow$ 512B $\rightarrow$ 1024B (1kB). The latency is supposed to be changed accordingly. Now, we study the performance (IPC - instructions per cycle) and plot the graph as attached.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \multirow{2}{*}{\textbf{Name of Program}} & \multicolumn{5}{c|}{\textbf{IPC}} \\
+        \cline{2-6}
+        & \textbf{No Cache} & \textbf{16B} & \textbf{128B} & \textbf{512B} & \textbf{1024B} \\
+        \hline
+        \texttt{descending.asm} & 0.02493 & 0.06490 & 0.07075 & 0.07025 & 0.06977 \\
+        \hline
+        \texttt{evenorodd.asm}  & 0.02439 & 0.02013 & 0.02013 & 0.02013 & 0.02013 \\
+        \hline
+        \texttt{fibonacci.asm}  & 0.02482 & 0.04903 & 0.04885 & 0.04867 & 0.04850 \\
+        \hline
+        \texttt{prime.asm}      & 0.02463 & 0.04202 & 0.04202 & 0.04202 & 0.04202 \\  % Changed 0.4202 → 0.04202
+        \hline
+        \texttt{palindrome.asm} & 0.02462 & 0.05458 & 0.05458 & 0.05458 & 0.05458 \\
+        \hline
+    \end{tabular}
+    \caption{Instruction Per Cycle (IPC) across different L1d-cache sizes}
+    \label{tab:ipc_results}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{case2.png}
+    \caption{Graph for comparing the varying L1d-cache}
+    \label{fig:graph2}
+\end{figure}
+
+\section{Observations \& Conclusions}
+\begin{itemize}
+    \item We successfully modelled the updated latency in the simulator after implementing cache memory. The updates have been made in the InstructionFetch (IF) Stage and during the load/store process, under the MemoryAccess (MA) Stage. 
+    \item For the code based implementation, separate classes namely - \texttt{Cache.java} and \texttt{CacheLine.java} were created within \texttt{Processor.memorysystem}.
+    \item From the graphical representation of the table, we observe that the introduction of an \texttt{L1i-cache} decreases IPC initially, followed by a sharp increase (exception being in case of \texttt{evenoradd.asm}). Additionally, IPC steadily decreases with increase in \texttt{L1i-cache} size.
+    \item Also, it can be observed that introduction of an \texttt{L1d-cache} sharply increases IPC initially, followed by converging the IPC on a further increase in the \texttt{L1d-cache size}.
+    \item We can conclude that with a considerable amount of data, we can find an optimal value for the sie of \texttt{L1i-cache} and \texttt{L1d-cache} to maximise the throughput (IPC).
+\end{itemize}
+
+\newpage
+
+\appendix
+\section{Code for Generating Graphs}
+\begin{lstlisting}[caption={Code for graph for varying l1i-cache (l1d-constant}]
+import matplotlib.pyplot as plt
+
+# Defining the data
+X = [0, 16, 128, 512, 1024]
+Y_descending = [0.02493, 0.02293, 0.08848, 0.07804, 0.06977]
+Y_evenorodd = [0.02439, 0.02238, 0.02158, 0.02083, 0.02013]
+Y_fibonacci = [0.02482, 0.02291, 0.05864, 0.05313, 0.04850]
+Y_prime = [0.02463, 0.02375, 0.05022, 0.04576, 0.04202]
+Y_palindrome = [0.02462, 0.02315, 0.06947, 0.06113, 0.05458]
+
+# Initialise the figure (graph)
+plt.figure(figsize=(12, 8))
+
+# Plot each line with label
+plt.plot(X, Y_descending, "-o", label="descending.asm")
+plt.plot(X, Y_evenorodd, "-s", label="evenorodd.asm")
+plt.plot(X, Y_fibonacci, "-^", label="fibonacci.asm")
+plt.plot(X, Y_prime, "-d", label="prime.asm")
+plt.plot(X, Y_palindrome, "-p", label="palindrome.asm")
+
+# Annotate all points
+def annotate_points(X, Y, offset=(0, 10)):
+    for x, y in zip(X, Y):
+        plt.annotate(f"{y:.5f}", xy=(x, y), textcoords="offset points",
+                     xytext=offset, ha='center', fontsize=8)
+
+annotate_points(X, Y_descending, offset=(0, 10))
+annotate_points(X, Y_evenorodd, offset=(0, -15))
+annotate_points(X, Y_fibonacci, offset=(0, 10))
+annotate_points(X, Y_prime, offset=(0, -15))
+annotate_points(X, Y_palindrome, offset=(0, 10))
+
+# Axis labels and title
+plt.title("Program IPC vs L1i-cache Size (Fixed L1d-cache)", fontsize=16)
+plt.xlabel("L1i-cache Size (Bytes)", fontsize=14)
+plt.ylabel("Throughput (IPC)", fontsize=14)
+plt.xticks(X)
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.legend(title="Assembly Programs", fontsize=10)
+plt.tight_layout()
+
+# Save the figure
+plt.savefig("case1.png", dpi=1000)
+
+plt.show()
+
+\end{lstlisting}
+
+
+\end{document}

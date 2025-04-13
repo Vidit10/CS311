@@ -1,7 +1,7 @@
 package processor.memorysystem;
 
 import generic.*;
-import generic.Event.EventType;
+// import generic.Event.EventType;
 import processor.Clock;
 
 public class MainMemory implements Element {

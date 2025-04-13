@@ -79,7 +79,7 @@ public class Simulator {
 
     public static void simulate() {
         int cycles = 0;
-        while (!simulationComplete) {
+        while (!Simulator.simulationComplete) {
             processor.getRWUnit().performRW();
             processor.getMAUnit().performMA();
             processor.getEXUnit().performEX();
@@ -97,8 +97,8 @@ public class Simulator {
         // set statistics
         //Statistics.setNumberOfCycles((int) Clock.getCurrentTime());
         Statistics stat = new Statistics();
-        Statistics.setNumberOfCycles(cycles);
-        Statistics.setNumberOfInstructions(ins_count);
+        stat.setNumberOfCycles(cycles);
+        stat.setNumberOfInstructions(ins_count);
         stat.setCPI();
         stat.setIPC();
     }

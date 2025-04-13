@@ -1,0 +1,4 @@
+Number of instructions executed = 365
+Number of cycles taken = 3947
+CPI = 10.813699
+IPC = 0.092475295
